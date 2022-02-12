@@ -1,4 +1,4 @@
-# ReactJS Test 001
+# Learning MERN
 
 ## Table of Contents
 - [ReactJS Test 001](#reactjs-test-001)
