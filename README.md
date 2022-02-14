@@ -16,6 +16,7 @@
       - [1.5.2 Option 2: Download](#152-option-2-download)
       - [1.5.3 Option 3: React-Bootstrap or Reactstrap](#153-option-3-react-bootstrap-or-reactstrap)
     - [1.6 Express.js](#16-expressjs)
+    - [1.7 Routing](#17-routing)
   - [2. Development](#2-development)
     - [2.1 The Files](#21-the-files)
     - [2.2 React Features](#22-react-features)
@@ -159,6 +160,77 @@ For React-Bootstrap docs, see [this](https://react-bootstrap.github.io).
 ### 1.6 Express.js
 TODO Figure out
 
+### 1.7 Routing
+Make sure you are `cd`'d into your React app directory. Then install React Router:
+```bash
+$ npm i -D react-router-dom
+```
+Then in your default base Component (likely `App.js`), set up the routing.
+We need to import React Router:
+```JS
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+```
+We also need to import any page components we want to have. For example:
+```JS
+import Layout from "./pages/Layout";
+import Home from "./pages/Home";
+import Blogs from "./pages/Blogs";
+import Contact from "./pages/Contact";
+import NoPage from "./pages/NoPage";
+```
+Then in our base component, we actual define the routing.
+```JSX
+function App() {
+  render() {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="blogs" element={<Blogs />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="*" element={<NoPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    );
+  }
+}
+export default App;
+```
+We can nest `Route` components as shown in this example. This means that the `"blogs"` path will actually be at `/blogs`. `"*"` is a wild card that is good for 404s. But what does the `Layout` component do if it is just routing to other components? A parent component can allow for shared content. Anything in the `Layout` component will also be in any of its child routes. This is good for handling navbars.
+
+To actually implement this shared content, we use the `Outlet` component in a parent component. This will basically be replaced with whatever child route we are at. 
+Here is an example `Layout.js`:
+```JS
+import { Outlet, Link } from "react-router-dom";
+
+const Layout = () => {
+  return (
+    <>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/blogs">Blogs</Link>
+          </li>
+          <li>
+            <Link to="/contact">Contact</Link>
+          </li>
+        </ul>
+      </nav>
+
+      <Outlet />
+    </>
+  )
+};
+
+export default Layout;
+```
+The `Link` components are used to replace `<a>` tags for linking between routes.
+
 ## 2. Development
 ### 2.1 The Files
 1. **node_modules**: 3rd party libraries including React
@@ -250,7 +322,7 @@ Three methods update the UI:
 3. `findDOMNode` 
 
 ### 2.4 File Structure
-File structure is kind of up to the developer(s). Keeping things within the `src` folder and organizing by either routes or features is a common method. Another method is organizing by file type like having a `src/api` folder and a `src/components` folder.
+File structure is kind of up to the developer(s). Keeping things within the `src` folder and organizing by either routes or features is a common method. Another method is organizing by file type like having a `src/api` folder, a `src/components` folder, and a `src/pages` folder.
 
 What matters is accessing other components. This is done with relative imports.
 Example:
@@ -259,6 +331,12 @@ src/
   components/
     Component1.js
     Component2.js
+  api/
+    ...
+  pages/
+    Home.js
+    About.js
+    Contact.js
 ```
 ```JS
 // In Component2.js 
@@ -300,4 +378,7 @@ TODO [this might help](https://reactjs.org/docs/testing.html)
 1. [Java T Point's ReactJS tutorial](https://www.javatpoint.com/reactjs-tutorial)
 2. [freeCodeCamp React w/ Node/Express](https://www.freecodecamp.org/news/create-a-react-frontend-a-node-express-backend-and-connect-them-together-c5798926047c/)
 3. [ReactJS Docs](https://reactjs.org/docs/getting-started.html)
-  
+4. [Routing w/ React](https://www.w3schools.com/react/react_router.asp)
+5. [Forms w/ React](https://www.digitalocean.com/community/tutorials/how-to-build-forms-in-react)
+6. [Logins w/ React](https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications)
+7. [Other logins w/ React](https://www.freecodecamp.org/news/how-to-authenticate-users-and-implement-cors-in-nodejs-applications/)
