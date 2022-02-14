@@ -1,7 +1,7 @@
-# ReactJS Test 001
+# Learning MERN
 
 ## Table of Contents
-- [ReactJS Test 001](#reactjs-test-001)
+- [Learning MERN](#learning-mern)
   - [Table of Contents](#table-of-contents)
   - [1. Setup](#1-setup)
     - [1.1 Check npm and node.js](#11-check-npm-and-nodejs)
