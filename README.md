@@ -15,7 +15,12 @@
       - [1.5.1 Option 1: CDNs](#151-option-1-cdns)
       - [1.5.2 Option 2: Download](#152-option-2-download)
       - [1.5.3 Option 3: React-Bootstrap or Reactstrap](#153-option-3-react-bootstrap-or-reactstrap)
-    - [1.6 Express.js](#16-expressjs)
+    - [1.6 Setting up the Backend](#16-setting-up-the-backend)
+      - [1.6.1 Install Tools](#161-install-tools)
+      - [1.6.1 Connecting to the Database (Without Mongoose)](#161-connecting-to-the-database-without-mongoose)
+      - [1.6.2 Connecting to the Database (with Mongoose)](#162-connecting-to-the-database-with-mongoose)
+      - [1.6.3 Defining Backend Routing](#163-defining-backend-routing)
+      - [1.6.4 Authorization](#164-authorization)
     - [1.7 Routing](#17-routing)
   - [2. Development](#2-development)
     - [2.1 The Files](#21-the-files)
@@ -157,8 +162,102 @@ For Reactstrap, see [this](https://www.javatpoint.com/react-bootstrap).
 
 For React-Bootstrap docs, see [this](https://react-bootstrap.github.io).
 
-### 1.6 Express.js
-TODO Figure out
+### 1.6 Setting up the Backend
+#### 1.6.1 Install Tools
+In your project folder, make a new folder (something like `api` or `server`) and `cd` into it.
+```bash
+$ mkdir server
+$ cd server
+```
+Initialize the package.json.
+```bash
+$ npm init -y
+```
+Install `MongoDB`, `Express.js`, `CORS`, and `Dotenv`.
+```bash
+$ npm install mongodb express cors dotenv
+```
+These packages are:
+- `MongoDB`: MongoDB database driver for Node.js
+- `Express.js`: Web framework for Node.js
+- `CORS`: Cross origin resource sharing for Node.js
+- `Dotenv`: Module for loading environment variables for separation of configuration files
+
+Create a `server.js` with the following code:
+```JS
+const express = require("express");                   // Import express
+const app = express();                                // Express app
+const cors = require("cors");                         // Import cors
+require("dotenv").config({ path: "./config.env" });   // Environment config
+const port = process.env.PORT || 5000;                // Environment defined port or 5000
+app.use(cors());                                      // Use cors
+app.use(express.json());                              // Use Express
+app.use(require("./routes/record"));                  // Get backend routing definition
+// get driver connection
+const dbo = require("./db/conn");
+ 
+app.listen(port, () => {
+  // perform a database connection when server starts
+  dbo.connectToServer(function (err) {
+    if (err) console.error(err);
+ 
+  });
+  console.log(`Server is running on port: ${port}`);
+});
+```
+
+#### 1.6.1 Connecting to the Database (Without Mongoose)
+Set up a sandbox database with MongoDB. Follow [this tutorial](https://docs.atlas.mongodb.com/getting-started/).
+
+Set up a `config.env` file in your `server` folder similar to:
+```bash
+ATLAS_URI=mongodb+srv://<username>:<password>@sandbox.jadwj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+PORT=5000
+```
+This will be used by `dotenv` to get environment variables set up for connecting to the database.
+
+Make a `db` folder inside your `server` folder. Inside `db`, make a `conn.js`:
+```JS
+const { MongoClient } = require("mongodb");
+const Db = process.env.ATLAS_URI;
+const client = new MongoClient(Db, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+ 
+var _db;
+ 
+module.exports = {
+  connectToServer: function (callback) {
+    client.connect(function (err, db) {
+      // Verify we got a good "db" object
+      if (db)
+      {
+        _db = db.db("myFirstDatabase"); // Replace with DB name
+        console.log("Successfully connected to MongoDB."); 
+      }
+      return callback(err);
+         });
+  },
+ 
+  getDb: function () {
+    return _db;
+  },
+};
+```
+This will handle connecting to the database using the environment variables defined in `config.env` and set through `dotenv` in `server.js`. In other files, access the database connection object with:
+```JS
+const dbo = require(/* Relative path to conn.js */);
+```
+
+#### 1.6.2 Connecting to the Database (with Mongoose)
+TODO
+
+#### 1.6.3 Defining Backend Routing
+TODO
+
+#### 1.6.4 Authorization
+TODO [this might be good](https://dev.to/salarc123/mern-stack-authentication-tutorial-part-1-the-backend-1c57)
 
 ### 1.7 Routing
 Make sure you are `cd`'d into your React app directory. Then install React Router:
@@ -382,3 +481,5 @@ TODO [this might help](https://reactjs.org/docs/testing.html)
 5. [Forms w/ React](https://www.digitalocean.com/community/tutorials/how-to-build-forms-in-react)
 6. [Logins w/ React](https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications)
 7. [Other logins w/ React](https://www.freecodecamp.org/news/how-to-authenticate-users-and-implement-cors-in-nodejs-applications/)
+8. [MERN Stack Tutorial](https://www.mongodb.com/languages/mern-stack-tutorial)
+9. [MERN Auth Tutorial](https://dev.to/salarc123/mern-stack-authentication-tutorial-part-1-the-backend-1c57)
