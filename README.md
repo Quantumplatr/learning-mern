@@ -40,7 +40,8 @@
     - [2.5 File Template](#25-file-template)
     - [2.6 Working with MongoDB](#26-working-with-mongodb)
       - [2.6.1 Mongo Shell](#261-mongo-shell)
-      - [2.6.2 Document Format](#262-document-format)
+      - [2.6.2 Collections](#262-collections)
+      - [2.6.3 Document Format](#263-document-format)
   - [3. Testing](#3-testing)
   - [Resources](#resources)
 
@@ -494,13 +495,18 @@ Here are some useful commands:
 - `show collections`: Shows what collections you have
 - `db.<collection>.<action>`: Performs `<action>` on `<collection>`. Some actions below.
   - `.insertOne(<object>)`: Insert `<object>` into `<collection>`
+  - `.insert(<object>|[<object>,...])`: Inserts the given objects into `<collection>`
   - `.find()`: Gives a cursor to the results. If cursor is not stored (i.e. `var cursor = db.<collection>.find()`), then it prints up to the first 20 documents. 
     - `.find().pretty()`: Formats the result.
 - `db.getCollection("<collection>").<action>`: For collections with a name space/hyphen/etc or a name that conflicts with a function, you can use `db.getCollection()` to access the collection
+- `db.createCollection(<collection>)`: Creates the collection `<collection>`
 - `db.createUser()`: Creates a user for the database. See [the docs](https://docs.mongodb.com/manual/reference/method/db.createUser/) for more information.
 
-#### 2.6.2 Document Format
-Basically just JSON. However, an `_id` field is always required.
+#### 2.6.2 Collections
+Collections are somewhat analgous to tables in relational databases. They hold documents.
+
+#### 2.6.3 Document Format
+Basically just JSON. However, an `_id` field is always required. However, if `_id` is not specified, it will be automatically generated.
 For example, this could be a document format:
 ```JSON
 {
@@ -520,6 +526,22 @@ For example, this could be a document format:
   ]
 }
 ```
+Each document in a collection can have different fields. This makes it easy to add fields on the fly. For example, you can insert
+```JSON
+{
+  first_name: "John",
+  last_name: "Doe"
+}
+```
+and then insert
+```JSON
+{
+  first_name: "Jane",
+  last_name: "Doe",
+  gender: "female"
+}
+```
+and the first object will not have the `gender` field but the second will.
 
 ## 3. Testing
 TODO [this might help](https://reactjs.org/docs/testing.html)
