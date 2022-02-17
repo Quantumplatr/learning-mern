@@ -17,7 +17,7 @@
       - [1.5.3 Option 3: React-Bootstrap or Reactstrap](#153-option-3-react-bootstrap-or-reactstrap)
     - [1.6 Setting up the Backend](#16-setting-up-the-backend)
       - [1.6.1 Install Tools](#161-install-tools)
-      - [1.6.1 Connecting to the Database (Without Mongoose)](#161-connecting-to-the-database-without-mongoose)
+      - [1.6.1 Connecting to the Database (without Mongoose)](#161-connecting-to-the-database-without-mongoose)
       - [1.6.2 Connecting to the Database (with Mongoose)](#162-connecting-to-the-database-with-mongoose)
       - [1.6.3 Defining Backend Routing](#163-defining-backend-routing)
       - [1.6.4 Authorization](#164-authorization)
@@ -38,6 +38,9 @@
       - [2.3.6 Updating the UI](#236-updating-the-ui)
     - [2.4 File Structure](#24-file-structure)
     - [2.5 File Template](#25-file-template)
+    - [2.6 Working with MongoDB](#26-working-with-mongodb)
+      - [2.6.1 Mongo Shell](#261-mongo-shell)
+      - [2.6.2 Document Format](#262-document-format)
   - [3. Testing](#3-testing)
   - [Resources](#resources)
 
@@ -206,8 +209,10 @@ app.listen(port, () => {
 });
 ```
 
-#### 1.6.1 Connecting to the Database (Without Mongoose)
+#### 1.6.1 Connecting to the Database (without Mongoose)
 Set up a sandbox database with MongoDB. Follow [this tutorial](https://docs.atlas.mongodb.com/getting-started/).
+
+Or set up a local database. Download the MongoDB server software from their [website](https://www.mongodb.com/try/download/community). Open a `mongo` shell by running `mongo.exe` in the MongoDB server folder (default for Windows is `C:\Program Files\MongoDB\Server\<version>\bin\mongo.exe`). MongoDB Compass is also helpful. 
 
 Set up a `config.env` file in your `server` folder similar to:
 ```bash
@@ -469,6 +474,53 @@ class ComponentName extends React.Component {
 export default ComponentName;
 ```
 
+### 2.6 Working with MongoDB
+With a relational database you map out a specific scheme in good detail but no need for predefining things in MongoDB. MongoDB (and other NoSQL databases) is easy to scale. They're also fast.
+
+If you're using a local MongoDB instance, (see [1.6.1](#161-connecting-to-the-database-without-mongoose) for setup), to connect MongoDB Compass to it, the below connection string should work.
+```
+mongodb://localhost:27017
+```
+
+Again, you can also connect through the command line by running `mongo.exe` (windows default is `C:\Program Files\MongoDB\Server\<version>\bin\mongo.exe`).
+
+MongoDB Compass has a built in `mongosh` shell that works great as well.
+
+#### 2.6.1 Mongo Shell
+Here are some useful commands:
+- `db`: Tells what database you are currently in (default is `test`)
+- `show databases`: Shows what databases you have
+- `use <database>`: Switches to the given database. If the given database doesn't exist, it is created.
+- `show collections`: Shows what collections you have
+- `db.<collection>.<action>`: Performs `<action>` on `<collection>`. Some actions below.
+  - `.insertOne(<object>)`: Insert `<object>` into `<collection>`
+  - `.find()`: Gives a cursor to the results. If cursor is not stored (i.e. `var cursor = db.<collection>.find()`), then it prints up to the first 20 documents. 
+    - `.find().pretty()`: Formats the result.
+- `db.getCollection("<collection>").<action>`: For collections with a name space/hyphen/etc or a name that conflicts with a function, you can use `db.getCollection()` to access the collection
+- `db.createUser()`: Creates a user for the database. See [the docs](https://docs.mongodb.com/manual/reference/method/db.createUser/) for more information.
+
+#### 2.6.2 Document Format
+Basically just JSON. However, an `_id` field is always required.
+For example, this could be a document format:
+```JSON
+{
+  _id: "1",
+  first_name: "John",
+  last_name: "Doe",
+  memberships: ["mem1", "mem2"],
+  address: {
+    street: "4 Main St.",
+    city: "Boston"
+  },
+  contacts: [
+    {
+      name: "Brad",
+      relationship: "friend"
+    }
+  ]
+}
+```
+
 ## 3. Testing
 TODO [this might help](https://reactjs.org/docs/testing.html)
 
@@ -483,3 +535,4 @@ TODO [this might help](https://reactjs.org/docs/testing.html)
 7. [Other logins w/ React](https://www.freecodecamp.org/news/how-to-authenticate-users-and-implement-cors-in-nodejs-applications/)
 8. [MERN Stack Tutorial](https://www.mongodb.com/languages/mern-stack-tutorial)
 9. [MERN Auth Tutorial](https://dev.to/salarc123/mern-stack-authentication-tutorial-part-1-the-backend-1c57)
+10. [MongoDB in 30min](https://www.youtube.com/watch?v=pWbMrx5rVBE)
