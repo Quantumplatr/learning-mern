@@ -39,7 +39,7 @@
     - [2.4 File Structure](#24-file-structure)
     - [2.5 File Template](#25-file-template)
     - [2.6 Working with MongoDB](#26-working-with-mongodb)
-      - [2.6.1 Mongo Shell](#261-mongo-shell)
+      - [2.6.1 Mongo Shell & Queries](#261-mongo-shell--queries)
       - [2.6.2 Collections](#262-collections)
       - [2.6.3 Document Format](#263-document-format)
   - [3. Testing](#3-testing)
@@ -487,7 +487,7 @@ Again, you can also connect through the command line by running `mongo.exe` (win
 
 MongoDB Compass has a built in `mongosh` shell that works great as well.
 
-#### 2.6.1 Mongo Shell
+#### 2.6.1 Mongo Shell & Queries
 Here are some useful commands:
 - `db`: Tells what database you are currently in (default is `test`)
 - `show databases`: Shows what databases you have
@@ -496,11 +496,19 @@ Here are some useful commands:
 - `db.<collection>.<action>`: Performs `<action>` on `<collection>`. Some actions below.
   - `.insertOne(<object>)`: Insert `<object>` into `<collection>`
   - `.insert(<object>|[<object>,...])`: Inserts the given objects into `<collection>`
-  - `.find()`: Gives a cursor to the results. If cursor is not stored (i.e. `var cursor = db.<collection>.find()`), then it prints up to the first 20 documents. 
+  - `.find(<match>)`: Gives a cursor to the results. If cursor is not stored (i.e. `var cursor = db.<collection>.find()`), then it prints up to the first 20 documents matching the given `<match>` object. `<match>` is optional. 
     - `.find().pretty()`: Formats the result.
+  - `.update(<match>,<new-obj>)`: Updates documents that match the given `<match>` object and sets their value to `<new-obj>`. If there are no matches, nothing happens. To upsert (insert if no match), add a third parameter: `{upsert: true}`.
+    - `.update(<match>,{$set:{<field>:<value>,...}})`: Updates documents that match the given `<match>` object and updates their fields with the given field value pairs.
+    - `.update(<match>,{$inc:{<field>:<value>...}})`: Updates documents that match the given `<match>` object increments the fields by the given value.
+    - `.update(<match>,{$unset:{<field>:"",...})`: Updates documents that match the given `<match>` object by removing the given fields. The values of the fields do not matter.
+    - `.update(<match>,{$rename:{<field>:<new-name>}})`: Updates documents that match the given `<match>` object by renaming the given fields to their given values.
+  - `.remove(<match>)`: Deletes documents that match the given `<match>` object. Can add second parameter for options (e.g. `{justOne:true}` to only delete one).
 - `db.getCollection("<collection>").<action>`: For collections with a name space/hyphen/etc or a name that conflicts with a function, you can use `db.getCollection()` to access the collection
 - `db.createCollection(<collection>)`: Creates the collection `<collection>`
 - `db.createUser()`: Creates a user for the database. See [the docs](https://docs.mongodb.com/manual/reference/method/db.createUser/) for more information.
+
+Querying uses basically JSON objects. For example, using `{first_name:"John", "address.city":"Boston"}` will match any document with the `first_name` equal to `"John"` and `"address"` subdocument with `"city"` field `"Boston"` (e.g. `{first_name:"John",last_name:"Doe",address:{city:"Boston"}}`). There are all kinds of operators. See [this page](https://docs.mongodb.com/manual/reference/operator/query/) for more information.
 
 #### 2.6.2 Collections
 Collections are somewhat analgous to tables in relational databases. They hold documents.
