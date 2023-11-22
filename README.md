@@ -1,5 +1,7 @@
 # Learning MERN
 
+## Note: This is outdated/incomplete. I plan to adjust this to use Tailwind instead of Bootstrap
+
 ## Table of Contents
 - [Learning MERN](#learning-mern)
   - [Table of Contents](#table-of-contents)
